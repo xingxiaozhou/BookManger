@@ -1,0 +1,100 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Administrator
+  Date: 2018/4/12 0012
+  Time: 10:45
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<html>
+<head>
+    <title>修改</title>
+    <style type="text/css">
+        #body {
+            margin: 0px auto;
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+
+    <script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+    <!-- jQuery.form.js是一个form插件,支持ajax表单提交和ajax文件上传 -->
+    <script type="text/javascript" src="/js/jquery.form.js"></script>
+</head>
+
+<body>
+<div id="body">
+    <div style="margin: 0px auto; width: 500px;">
+        <form action="/addBook.htm" method="post" enctype="multipart/form-data" id="imm">
+            <table border="1px" style="text-align: center;">
+                <tr>
+                    <td>图书编号</td>
+                    <input type="hidden" name="bookId" value="${bookInfo.bookId}">
+                    <td><input id="code" name="bookCode" onblur="checkCode();" value="${bookInfo.bookCode}"><span
+                            id="codeMessage"></span></td>
+                </tr>
+                <tr>
+                    <td>图书名称</td>
+                    <td><input name="bookName" value="${bookInfo.bookName}"></td>
+                </tr>
+                <tr>
+                    <td>图书分类</td>
+                    <td style="text-align: left;"><select name="bookType.id">
+                        <c:forEach items="${bookTypes}" var="bookTy">
+                            <option  value="${bookTy.id }">${bookTy.typeName}</option>
+                        </c:forEach>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>作者</td>
+                    <td><input name="bookAuthor" value="${bookInfo.bookAuthor}"></td>
+                </tr>
+                <tr>
+                    <td>出版社</td>
+                    <td><input name="publishPress" value="${bookInfo.publishPress}"></td>
+                </tr>
+                <tr>
+                    <td>出版时间</td>
+                    <td><input type="date" name="publishDate"></td>
+                </tr>
+                <tr>
+                    <td>图片上传</td>
+                    <td><img id="img" width="50dp" height="50dp" src="">
+                        <input name="fileImage" type="file" onchange="uploadImage();">
+                        <input type="text" hidden name="path" id="path" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="提交"> <input
+                            type="button" value="取消"></td>
+
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+
+        function uploadImage() {
+            //编写ajax
+            var obj = {
+                url: "/imageupload.htm",
+                dataType: "json",
+                type: "post",
+                success: function (data) {
+                    $("#img").attr("src", data.imagePath);
+                    $("#path").val(data.imagePath);
+                }
+            };
+            //提交form
+            $("#imm").ajaxSubmit(obj);
+
+        }
+    </script>
+</div>
+</body>
+
+
+</html>

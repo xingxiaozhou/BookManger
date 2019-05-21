@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vp.dao.BookInfoMapper">
+  <resultMap id="BaseResultMap" type="cn.vp.bean.BookInfo">
+    <id column="book_id" jdbcType="INTEGER" property="bookId" />
+    <result column="book_code" jdbcType="VARCHAR" property="bookCode" />
+    <result column="book_name" jdbcType="VARCHAR" property="bookName" />
+    <result column="book_author" jdbcType="VARCHAR" property="bookAuthor" />
+    <result column="publish_press" jdbcType="VARCHAR" property="publishPress" />
+    <result column="publish_date" jdbcType="DATE" property="publishDate" />
+    <result column="is_borrow" jdbcType="INTEGER" property="isBorrow" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <association property="bookType" javaType="cn.vp.bean.BookType">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    book_id, book_code, book_name, book_type, book_author, publish_press, publish_date, 
+    is_borrow, path
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from book_info
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </select>
+
+  <select id="query" resultMap="BaseResultMap">
+    SELECT
+    book_info.book_id,
+    book_info.book_code,
+    book_info.book_name,
+    book_info.book_type,
+    book_info.book_author,
+    book_info.publish_press,
+    book_info.publish_date,
+    book_info.is_borrow,
+    book_info.path,
+    book_type.id,
+    book_type.type_name
+    FROM
+    book_info
+    INNER JOIN book_type ON book_info.book_type = book_type.id
+    <where>
+      <if test="bookTypeid !=0 and  bookTypeid!=null">
+        book_type=#{bookTypeid}
+      </if>
+      <if test="bookname !=null and  bookname!=''">
+        and book_name like CONCAT('%',#{bookname},'%')
+      </if>
+      <if test=" borrow!=-1 and borrow!=null  and borrow!=''   ">
+        and is_borrow=#{borrow}
+      </if>
+    </where>
+
+  </select>
+
+
+  <select id="queryByid" resultMap="BaseResultMap">
+    SELECT
+    book_info.book_id,
+    book_info.book_code,
+    book_info.book_name,
+    book_info.book_type,
+    book_info.book_author,
+    book_info.publish_press,
+    book_info.publish_date,
+    book_info.is_borrow,
+    book_info.path,
+    book_type.id,
+    book_type.type_name
+    FROM
+    book_info
+    INNER JOIN book_type ON book_info.book_type = book_type.id
+       WHERE book_id=#{bookid}
+
+  </select>
+
+  <select id="queryAll"  resultMap="BaseResultMap">
+    SELECT
+book_info.book_id,
+book_info.book_code,
+book_info.book_name,
+book_info.book_type,
+book_info.book_author,
+book_info.publish_press,
+book_info.publish_date,
+book_info.is_borrow,
+book_info.path,
+book_type.id,
+book_type.type_name
+FROM
+book_info
+INNER JOIN book_type ON book_info.book_type = book_type.id
+  </select>
+
+  <delete id="deleteByIds">
+    DELETE FROM  book_info
+    WHERE book_id IN 
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from book_info
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.vp.bean.BookInfo">
+    insert into book_info (book_id, book_code, book_name, 
+      book_type, book_author, publish_press, 
+      publish_date, is_borrow, path
+      )
+    values (#{bookId,jdbcType=INTEGER}, #{bookCode,jdbcType=VARCHAR}, #{bookName,jdbcType=VARCHAR}, 
+      #{bookType.id,jdbcType=INTEGER}, #{bookAuthor,jdbcType=VARCHAR}, #{publishPress,jdbcType=VARCHAR},
+      #{publishDate,jdbcType=DATE}, #{isBorrow,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.vp.bean.BookInfo">
+    insert into book_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="bookId != null">
+        book_id,
+      </if>
+      <if test="bookCode != null">
+        book_code,
+      </if>
+      <if test="bookName != null">
+        book_name,
+      </if>
+      <if test="bookType != null">
+        book_type,
+      </if>
+      <if test="bookAuthor != null">
+        book_author,
+      </if>
+      <if test="publishPress != null">
+        publish_press,
+      </if>
+      <if test="publishDate != null">
+        publish_date,
+      </if>
+      <if test="isBorrow != null">
+        is_borrow,
+      </if>
+      <if test="path != null">
+        path,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="bookId != null">
+        #{bookId,jdbcType=INTEGER},
+      </if>
+      <if test="bookCode != null">
+        #{bookCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null">
+        #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="bookType != null">
+        #{bookType.id,jdbcType=INTEGER},
+      </if>
+      <if test="bookAuthor != null">
+        #{bookAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="publishPress != null">
+        #{publishPress,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null">
+        #{publishDate,jdbcType=DATE},
+      </if>
+      <if test="isBorrow != null">
+        #{isBorrow,jdbcType=INTEGER},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.vp.bean.BookInfo">
+    update book_info
+    <set>
+      <if test="bookCode != null">
+        book_code = #{bookCode,jdbcType=VARCHAR},
+      </if>
+      <if test="bookName != null">
+        book_name = #{bookName,jdbcType=VARCHAR},
+      </if>
+      <if test="bookType != null">
+        book_type = #{bookType.id,jdbcType=INTEGER},
+      </if>
+      <if test="bookAuthor != null">
+        book_author = #{bookAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="publishPress != null">
+        publish_press = #{publishPress,jdbcType=VARCHAR},
+      </if>
+      <if test="publishDate != null">
+        publish_date = #{publishDate,jdbcType=DATE},
+      </if>
+      <if test="isBorrow != null">
+        is_borrow = #{isBorrow,jdbcType=INTEGER},
+      </if>
+      <if test="path != null">
+        path = #{path,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.vp.bean.BookInfo">
+    update book_info
+    set book_code = #{bookCode,jdbcType=VARCHAR},
+      book_name = #{bookName,jdbcType=VARCHAR},
+      book_type = #{bookType.id,jdbcType=INTEGER},
+      book_author = #{bookAuthor,jdbcType=VARCHAR},
+      publish_press = #{publishPress,jdbcType=VARCHAR},
+      publish_date = #{publishDate,jdbcType=DATE},
+      is_borrow = #{isBorrow,jdbcType=INTEGER},
+      path = #{path,jdbcType=VARCHAR}
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </update>
+</mapper>
